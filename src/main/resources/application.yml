@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://45.93.101.18:3306/u440037415_dev_depgirpro
+    username: u440037415_dev_depgirpro
+    password: Ttlgs*2023++$
+    driver-class-name: org.mariadb.jdbc.Driver
+
+    spring:
+      jackson:
+        time-zone: America/Bogota
+        locale: es_CL
+      server:
+        error:
+          include-message: always
+      jpa:
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.MariaDB103Dialect
+            org.hibernate.annotations.CreationTimestamp: true
+            org.hibernate.annotations.UpdateTimestamp: true
+security:
+  jwt:
+    expiration-minutes: 30
+    secret-key: Q2xhdmUgbXV5IHByb3RlZ2lkYSBYWE9QTEkxNTY3ODk0MzIxQVpCWQ==
