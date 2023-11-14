@@ -2,6 +2,7 @@ package com.depgirpro.securitytokenlogin.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="personas")
 public class Persona implements UserDetails {
@@ -74,8 +76,17 @@ public class Persona implements UserDetails {
         this.correo = correo;
         this.contrasena = contrasena;
         this.dorsal = dorsal;
-        this.foto = foto;
-        this.rol = rol;
+    }
+
+    public Persona(String nombre, String documento, Integer edad, Float peso, Float altura, String correo, String contrasena, String dorsal) {
+        this.nombre = nombre;
+        this.documento = documento;
+        this.edad = edad;
+        this.peso = peso;
+        this.altura = altura;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.dorsal = dorsal;
     }
 
     @Override

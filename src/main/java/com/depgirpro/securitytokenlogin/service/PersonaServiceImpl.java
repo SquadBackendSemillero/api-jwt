@@ -21,8 +21,6 @@ public class PersonaServiceImpl implements PersonaService{
 
     private final PersonaRepository personaRep;
     private final RolRepository rolRep;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public ResponseEntity<?> insertar(RegistroPersonaDTO datos) {
@@ -39,7 +37,7 @@ public class PersonaServiceImpl implements PersonaService{
             return new ResponseEntity<>("Rol no encontrado", HttpStatus.NOT_FOUND);
         }
         Rol rolBD=rolFound.get();
-        String passwordEncoded=passwordEncoder.encode(datos.getContrasena());
+        String passwordEncoded= datos.getContrasena();
         Persona personaNew=new Persona(datos.getNombre(),datos.getIdentificacion(), datos.getEdad(), datos.getPeso(),datos.getAltura(),datos.getCorreo(),passwordEncoded,(datos.getDorsal()!=null)?datos.getDorsal():"No Disponible", (datos.getFoto()!=null)?datos.getFoto():"No Disponible", rolBD);
         personaRep.save(personaNew);
         PersonaResponseDTO2 response=new PersonaResponseDTO2(personaNew.getId(),personaNew.getNombre(),personaNew.getDocumento(),personaNew.getEdad(),personaNew.getPeso(),personaNew.getAltura(),personaNew.getCorreo(),personaNew.getDorsal(), personaNew.getFoto(),personaNew.getRol());
