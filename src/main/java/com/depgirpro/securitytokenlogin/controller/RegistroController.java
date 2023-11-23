@@ -1,6 +1,5 @@
 package com.depgirpro.securitytokenlogin.controller;
 
-import com.depgirpro.securitytokenlogin.dto.LoginRequestDTO;
 import com.depgirpro.securitytokenlogin.dto.RegistroPersonaDTO;
 import com.depgirpro.securitytokenlogin.model.Persona;
 import com.depgirpro.securitytokenlogin.service.AuthenticationService;

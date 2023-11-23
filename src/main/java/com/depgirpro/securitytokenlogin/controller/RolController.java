@@ -5,11 +5,7 @@ import com.depgirpro.securitytokenlogin.repository.RolRepository;
 import com.depgirpro.securitytokenlogin.service.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +27,13 @@ public class RolController {
     @GetMapping
     public ResponseEntity<List<Rol>> listarRoles(){
         return ResponseEntity.ok(this.rolRep.findAll());
+    }
+
+    @PostMapping()
+    public ResponseEntity<?> insertarRol(@RequestBody Rol rol){
+        rolRep.save(rol);
+        return ResponseEntity.ok("Rol insertado");
+
     }
 
 }

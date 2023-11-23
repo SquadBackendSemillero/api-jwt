@@ -7,10 +7,8 @@ import com.depgirpro.securitytokenlogin.model.Rol;
 import com.depgirpro.securitytokenlogin.repository.PersonaRepository;
 import com.depgirpro.securitytokenlogin.repository.RolRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,6 +30,7 @@ public class PersonaServiceImpl implements PersonaService{
         if (correoYaExistente.isPresent()){
             return ResponseEntity.badRequest().body("Persona ya registrada con este correo");
         }
+        System.out.println(datos.getRol());
         Optional<Rol> rolFound=rolRep.findById(datos.getRol());
         if (!rolFound.isPresent()){
             return new ResponseEntity<>("Rol no encontrado", HttpStatus.NOT_FOUND);

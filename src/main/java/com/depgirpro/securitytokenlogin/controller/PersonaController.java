@@ -20,7 +20,7 @@ public class PersonaController {
     private PersonaService personaService;
 
     @PostMapping
-    public ResponseEntity<?> insertar(@Valid @RequestBody RegistroPersonaDTO datos){
+    public ResponseEntity<?> insertar( @RequestBody RegistroPersonaDTO datos){
         return personaService.insertar(datos);
     }
 

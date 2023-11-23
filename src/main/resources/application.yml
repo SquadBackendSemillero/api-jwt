@@ -1,26 +1,15 @@
-
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3336/registro_test
     username: root
     password: 123456
     driver-class-name: org.mariadb.jdbc.Driver
-    spring:
-      jackson:
-        time-zone: America/Bogota
-        locale: es_CL
-      server:
-        error:
-          include-message: always
-      jpa:
-        properties:
-          hibernate:
-            dialect: org.hibernate.dialect.MariaDB103Dialect
-            org.hibernate.annotations.CreationTimestamp: true
-            org.hibernate.annotations.UpdateTimestamp: true
-security:
-  jwt:
-    expiration-minutes: 30
-    secret-key: Q2xhdmUgbXV5IHByb3RlZ2lkYSBYWE9QTEkxNTY3ODk0MzIxQVpCWQ==
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: create-drop
+
 server:
   port: 8081
