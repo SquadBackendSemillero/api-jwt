@@ -1,5 +1,6 @@
 package com.depgirpro.securitytokenlogin.dto;
 
+import com.depgirpro.securitytokenlogin.model.Rol;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,6 @@ public class RegistroPersonaDTO {
 
     private String dorsal;
     private String foto;
-    @NotNull
+
     private Long rol;
 }

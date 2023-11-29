@@ -16,8 +16,6 @@ public class PersonaResponseDTO2 {
 
     private String nombre;
 
-    private String documento;
-
     private Integer edad;
 
     private Float peso;

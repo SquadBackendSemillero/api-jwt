@@ -6,4 +6,5 @@ import org.springframework.http.ResponseEntity;
 public interface PersonaService {
 
     ResponseEntity<?> insertar(RegistroPersonaDTO datos);
+    public ResponseEntity<?> listarPersonas();
 }

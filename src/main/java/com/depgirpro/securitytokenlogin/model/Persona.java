@@ -1,25 +1,22 @@
 package com.depgirpro.securitytokenlogin.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="personas")
-public class Persona implements UserDetails {
+public class Persona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +57,7 @@ public class Persona implements UserDetails {
     private String foto;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne( optional = false)
     @JoinColumn(name="ID_ROL")
     private Rol rol;
 
@@ -74,44 +71,20 @@ public class Persona implements UserDetails {
         this.correo = correo;
         this.contrasena = contrasena;
         this.dorsal = dorsal;
+        this.rol  = rol;
         this.foto = foto;
-        this.rol = rol;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities=new ArrayList<>();
-         authorities.add(new SimpleGrantedAuthority("ROLE_"+this.rol.getNom_rol()));
-         return authorities;
+    public Persona(String nombre, String documento, Integer edad, Float peso, Float altura, String correo, String contrasena, String dorsal, Rol rol) {
+        this.nombre = nombre;
+        this.documento = documento;
+        this.edad = edad;
+        this.peso = peso;
+        this.altura = altura;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.dorsal = dorsal;
+        this.rol  = rol;
     }
 
-    @Override
-    public String getPassword() {
-        return this.contrasena;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.correo;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

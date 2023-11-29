@@ -1,42 +1,48 @@
 package com.depgirpro.securitytokenlogin.service;
 
 import com.depgirpro.securitytokenlogin.dto.LoginRequestDTO;
-import com.depgirpro.securitytokenlogin.dto.TokenResponseDTO;
+import com.depgirpro.securitytokenlogin.dto.RegistroPersonaDTO;
 import com.depgirpro.securitytokenlogin.model.Persona;
+import com.depgirpro.securitytokenlogin.model.Rol;
 import com.depgirpro.securitytokenlogin.repository.PersonaRepository;
+import com.depgirpro.securitytokenlogin.repository.RolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class AuthenticationService {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private PersonaRepository personaRep;
 
     @Autowired
-    private JWTService jwtService;
+    private RolRepository rolRep;
 
-    public TokenResponseDTO login(LoginRequestDTO datos){
-        UsernamePasswordAuthenticationToken upat=new UsernamePasswordAuthenticationToken(datos.getCorreo(), datos.getContrasena());
-        authenticationManager.authenticate(upat);
-        Persona persona=personaRep.findByCorreo(datos.getCorreo()).get();
-        String jwt=jwtService.generarToken(persona, generateExtraClaims(persona));
-        return new TokenResponseDTO(jwt);
+    public Persona login(LoginRequestDTO datos){
+
+        Persona persona=personaRep.findByCorreo(datos.getCorreo()).orElseThrow(()->new RuntimeException("No existe el usuario"));
+
+        if(!persona.getContrasena().equals(datos.getContrasena())){
+            throw new RuntimeException("Clave incorrecta");
+        }
+
+        // retornar un objeto con la persona y el inicio exitoso
+
+        return persona;
     }
 
-    private Map<String, Object> generateExtraClaims(Persona persona){
-        Map<String, Object> extraClaims=new HashMap<>();
-        extraClaims.put("name", persona.getNombre());
-        extraClaims.put("rol", persona.getRol().getNom_rol());
-        extraClaims.put("permisos", persona.getAuthorities());
-        return extraClaims;
+    public Persona registro(RegistroPersonaDTO datos){
+
+        System.out.println("Rol: " + datos.getRol());
+
+
+        Rol rolBD = rolRep.findById(datos.getRol()).orElseThrow(()->new RuntimeException("No existe el rol"));
+
+        Persona persona = new Persona(datos.getNombre(), datos.getIdentificacion(), datos.getEdad(), datos.getPeso(), datos.getAltura(), datos.getCorreo(), datos.getContrasena(), datos.getDorsal(), rolBD );
+
+        personaRep.save(persona);
+
+        return persona;
     }
+
 }
