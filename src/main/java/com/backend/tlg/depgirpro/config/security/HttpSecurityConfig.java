@@ -1,5 +1,6 @@
 package com.backend.tlg.depgirpro.config.security;
 
+import com.backend.tlg.depgirpro.config.security.filter.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,14 +20,19 @@ public class HttpSecurityConfig {
     @Autowired
     private AuthenticationProvider authProvider;
 
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf->csrf.disable())
                 .sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(httpRequest->{
                     httpRequest.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     httpRequest.requestMatchers(HttpMethod.POST, "/personas/registro").permitAll();
+                    httpRequest.anyRequest().authenticated();
                 }).build();
     }
 }

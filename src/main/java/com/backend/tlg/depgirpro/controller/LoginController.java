@@ -2,13 +2,14 @@ package com.backend.tlg.depgirpro.controller;
 
 import com.backend.tlg.depgirpro.dto.LoginRequestDTO;
 import com.backend.tlg.depgirpro.dto.LoginResponseDTO;
+import com.backend.tlg.depgirpro.dto.PerfilResponseDTO;
+import com.backend.tlg.depgirpro.entity.Persona;
+import com.backend.tlg.depgirpro.services.auth.AuthenticationService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
@@ -16,7 +17,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/login")
 public class LoginController {
 
-    private
+    @Autowired
+    private AuthenticationService authService;
 
 
     @PostMapping
@@ -24,6 +26,19 @@ public class LoginController {
         if (result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getFieldErrors().stream().map(err->"El campo '" + err.getField() + "' " + err.getDefaultMessage()).collect(Collectors.toList()));
         }
+        return ResponseEntity.ok(this.authService.login(credenciales));
 
+    }
+
+
+    @GetMapping
+    public ResponseEntity<Boolean> isTokenValid(@RequestParam String jwt){
+        return ResponseEntity.ok(this.authService.validateToken(jwt));
+    }
+
+
+    @GetMapping("/profile")
+    public ResponseEntity<PerfilResponseDTO> obtenerUsuarioLogeado(){
+        return ResponseEntity.ok(this.authService.findLoggedUser());
     }
 }
