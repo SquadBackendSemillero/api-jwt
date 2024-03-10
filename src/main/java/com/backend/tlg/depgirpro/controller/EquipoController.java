@@ -5,6 +5,7 @@ import com.backend.tlg.depgirpro.services.EquipoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ public class EquipoController {
     private final EquipoService equipoService;
 
     //admin
+    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> insertar(@Valid @RequestBody RegistroEquipoDTO dto, BindingResult resultado){
         if(resultado.hasErrors()){
@@ -27,12 +29,14 @@ public class EquipoController {
     }
 
     //jugador y admin
+    @PreAuthorize("hasAnyRole('admin', 'jugador')")
     @GetMapping("/encuentrosLocal/{idEquipo}")
     public ResponseEntity<?> listarEncuentrosDeLocal(@PathVariable Long idEquipo){
         return this.equipoService.listarEncuentrosDeLocal(idEquipo);
     }
 
     //jugador y admin
+    @PreAuthorize("hasAnyRole('admin', 'jugador')")
     @GetMapping("/encuentrosVisitante/{idEquipo}")
     public ResponseEntity<?> listarEncuentrosDeVisitante(@PathVariable Long idEquipo){
         return this.equipoService.listarEncuentrosDeVisitante(idEquipo);
