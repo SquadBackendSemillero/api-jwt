@@ -20,7 +20,6 @@ public class TorneoController {
     private final TorneoService torneoService;
 
     //admin
-    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> insertar(@Valid @RequestBody RegistroTorneoDTO dto, BindingResult resultado){
         if (resultado.hasErrors()){
@@ -30,7 +29,6 @@ public class TorneoController {
     }
 
     //admin
-    @PreAuthorize("hasRole('admin')")
     @PostMapping("/encuentros/{idTorneo}")
     public ResponseEntity<?> agregarEncuentro(@PathVariable Long idTorneo,@Valid @RequestBody RegistroEncuentroDTO dto, BindingResult resultado){
         if (resultado.hasErrors()){

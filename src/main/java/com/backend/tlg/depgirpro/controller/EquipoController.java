@@ -19,7 +19,6 @@ public class EquipoController {
     private final EquipoService equipoService;
 
     //admin
-    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> insertar(@Valid @RequestBody RegistroEquipoDTO dto, BindingResult resultado){
         if(resultado.hasErrors()){
@@ -29,14 +28,12 @@ public class EquipoController {
     }
 
     //jugador y admin
-    @PreAuthorize("hasAnyRole('admin', 'jugador')")
     @GetMapping("/encuentrosLocal/{idEquipo}")
     public ResponseEntity<?> listarEncuentrosDeLocal(@PathVariable Long idEquipo){
         return this.equipoService.listarEncuentrosDeLocal(idEquipo);
     }
 
     //jugador y admin
-    @PreAuthorize("hasAnyRole('admin', 'jugador')")
     @GetMapping("/encuentrosVisitante/{idEquipo}")
     public ResponseEntity<?> listarEncuentrosDeVisitante(@PathVariable Long idEquipo){
         return this.equipoService.listarEncuentrosDeVisitante(idEquipo);

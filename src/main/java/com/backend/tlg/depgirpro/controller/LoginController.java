@@ -8,6 +8,7 @@ import com.backend.tlg.depgirpro.services.auth.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class LoginController {
 
     @Autowired
     private AuthenticationService authService;
+
 
 
     @PostMapping

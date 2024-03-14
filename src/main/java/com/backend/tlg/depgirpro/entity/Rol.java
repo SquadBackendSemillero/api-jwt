@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -17,6 +20,9 @@ public class Rol {
     private Long id;
 
     private String rol;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "rol")
+    private List<Permiso> permisos=new ArrayList<>();
 
     public Rol(String rol) {
         this.rol = rol;

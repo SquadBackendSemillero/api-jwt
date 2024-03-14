@@ -40,45 +40,21 @@ public class JWTService {
     public void metodoPostInyeccionDeDependencias() {
         if (this.cryptoRep.findAll().isEmpty() && this.secretKeyRep.findAll().isEmpty()){
             return;
-        }else{
-            //esta crypto key es la que se usará para encriptar y desencriptar la secret_key
-            //se genera aleatoriamente cada vez que se sube el servidor gracias a la clase
-            //CryptoKeyGenerator
-            String cryptoKey=skg.generateBase64CryptoKey();
-
-            System.out.println("cryptokey:" + cryptoKey);
-
-            //si ya hay claves para el algoritmo bouncyCastle en la tabla crypto_keys, entonces
-            //se busca el ultimo registro de la tabla crypto_keys y token_secret_key ya que
-            //quiere decir que el ultimo registro de la tabla crypto_keys es la llave maestra que
-            //desencripta el ultimo registro de la tabla token_secret_key, que es el secret_key que firma los tokens
-            CryptoKey cryptoEntity=this.cryptoRep.encontrarUltimo();
-            SecretKeyEnc secretEntity=this.secretKeyRep.encontrarUltimo();
-            if (cryptoEntity.isValid() && secretEntity.isValid()) { //si ambos registros son validos entonces
-                System.out.println("secret Key encriptada" + secretEntity.getSecretKey());
-                System.out.println("crypto key encriptada" + cryptoEntity.getCryptoKey());
-                //se desencripta la ultima secret_key de la tabla token_secret_key usando la ultima crypto_key valida
-                secretKey=decrypt(secretEntity.getSecretKey(), cryptoEntity.getCryptoKey());
-                System.out.println("secret key desencriptada:" + secretKey);
-                //una vez desencriptada la secret_key para su uso en las peticiones,
-                //se procede a invalidar esos ultimos registros validos
-                cryptoEntity.setValid(false);
-                secretEntity.setValid(false);
-                cryptoRep.save(cryptoEntity);
-                secretKeyRep.save(secretEntity);
-            }else {
-                throw new InternalServerExceptionManaged("No se pudo realizar el proceso de encriptado y desencriptado de la secretKey");
-            }
-            //se crea nuevo registro para la tabla crypto_keys con la crypto_key que se genera aleatoriamente cada vez que se ejecuta el server
-            CryptoKey cryptoKeyNew=this.cryptoRep.save(new CryptoKey(cryptoKey, true));
-            //se genera un nuevo registro para la tabla token_secret_key valido, utilizando la nueva crypto_key registrada
-            //para encriptar nuevamente la secret_key que firma los tokens utilizando los metodos de la clase
-            //CryptoService
-            this.secretKeyRep.save(new SecretKeyEnc(encrypt(secretKey, cryptoKeyNew.getCryptoKey()), true));
-
         }
-
-
+        String cryptoKey=skg.generateBase64CryptoKey();
+        CryptoKey cryptoEntity=this.cryptoRep.encontrarUltimo();
+        SecretKeyEnc secretEntity=this.secretKeyRep.encontrarUltimo();
+        if (cryptoEntity.isValid() && secretEntity.isValid()) {
+            secretKey=decrypt(secretEntity.getSecretKey(), cryptoEntity.getCryptoKey());
+            cryptoEntity.setValid(false);
+            secretEntity.setValid(false);
+            cryptoRep.save(cryptoEntity);
+            secretKeyRep.save(secretEntity);
+        }else {
+            throw new InternalServerExceptionManaged("No se pudo realizar el proceso de encriptado y desencriptado de la secretKey");
+        }
+        CryptoKey cryptoKeyNew=this.cryptoRep.save(new CryptoKey(cryptoKey, true));
+        this.secretKeyRep.save(new SecretKeyEnc(encrypt(secretKey, cryptoKeyNew.getCryptoKey()), true));
     }
 
 

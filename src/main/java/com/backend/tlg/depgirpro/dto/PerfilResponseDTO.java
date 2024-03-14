@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +16,6 @@ public class PerfilResponseDTO {
     private String nombre;
     private String correo;
     private String equipo;
-    private String role;
+    private List<String> rol=new ArrayList<>();
 
 }

@@ -43,7 +43,7 @@ public class Persona implements UserDetails {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo")
     private Equipo equipo;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name="rol_id")
     private Rol role;
 
@@ -64,6 +64,9 @@ public class Persona implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities=new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_"+this.getRole().getRol()));
+        this.role.getPermisos().forEach(permiso->{
+            authorities.add(new SimpleGrantedAuthority(permiso.getOperacion().getNombre()));
+        });
         return authorities;
     }
 

@@ -18,7 +18,6 @@ public class SancionController {
     private final SancionService sancionService;
 
     //admin
-    @PreAuthorize("hasRole('admin')")
     @PostMapping
     public ResponseEntity<?> insertar(@RequestBody RegistroSancionDTO dto){
         return this.sancionService.insertar(dto);

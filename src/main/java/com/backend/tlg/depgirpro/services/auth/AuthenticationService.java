@@ -16,6 +16,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class AuthenticationService {
         Map<String, Object> claims=new HashMap<>();
         claims.put("id", persona.getId());
         claims.put("nombre",persona.getNombre());
-        claims.put("equipo", persona.getEquipo().getId());
+        claims.put("equipo", persona.getEquipo()!=null?persona.getEquipo().getId():"Es administrador, no tiene equipo.");
         claims.put("permisos", persona.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
         return claims;
 
@@ -74,12 +75,13 @@ public class AuthenticationService {
     public PerfilResponseDTO findLoggedUser(){
         Persona personaBD=personaRep.findByCorreo((String) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal()).get();
+
         return new PerfilResponseDTO(
                 personaBD.getId(),
                 personaBD.getNombre(),
                 personaBD.getCorreo(),
-                personaBD.getEquipo().getNombre(),
-                personaBD.getRole().getRol());
+                personaBD.getEquipo()!=null?personaBD.getEquipo().getNombre():"Sin equipo",
+                personaBD.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 
 }

@@ -15,8 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class DepgirproApplication{
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+
 
 
 
