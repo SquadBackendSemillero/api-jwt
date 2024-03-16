@@ -34,7 +34,7 @@ public class PersonaServiceImpl implements PersonaService {
         Map<String, Object> respuesta=new HashMap<>();
         Equipo equipoBD=this.equipoRep.findById(dto.getIdEquipo()).orElseThrow(
                 ()->new NotFoundExceptionManaged("Equipo no encontrado"));
-        Rol rolJugador=this.rolRep.findById(1L).get();
+        Rol rolJugador=this.rolRep.findById(2L).get();
         Persona personaNew=this.personaRep.save(new Persona(
                 dto.getNombre(),
                 dto.getEdad(),

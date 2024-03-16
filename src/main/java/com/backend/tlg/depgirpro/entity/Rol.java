@@ -21,7 +21,7 @@ public class Rol {
 
     private String rol;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "rol")
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "rol")
     private List<Permiso> permisos=new ArrayList<>();
 
     public Rol(String rol) {

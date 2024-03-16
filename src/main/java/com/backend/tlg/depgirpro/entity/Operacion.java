@@ -27,7 +27,7 @@ public class Operacion {
 
     private boolean permit_all;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "modulo_id")
     private Modulo modulo;
 }

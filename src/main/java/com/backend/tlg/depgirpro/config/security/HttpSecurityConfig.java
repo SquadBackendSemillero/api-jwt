@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -33,6 +35,9 @@ public class HttpSecurityConfig {
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
 
+    @Autowired
+    private AuthorizationManager<RequestAuthorizationContext>  authManager;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf->csrf.disable())
@@ -40,7 +45,9 @@ public class HttpSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
+                .authorizeHttpRequests(httpRequest->{
+                    httpRequest.anyRequest().access(authManager);
+                })
                 .exceptionHandling(config->{
                     config.authenticationEntryPoint(authenticationEntryPoint);
                     config.accessDeniedHandler(accessDeniedHandler);

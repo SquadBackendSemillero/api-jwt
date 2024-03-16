@@ -30,8 +30,7 @@ public class RegistroPersonaDTO {
     private String correo;
 
     @NotBlank(message = "no puede estar vacío")
-    @Max(value =15, message = "debe tener máximo 15 caracteres")
-    @Min(value = 10, message = "debe tener mínimo 10 caracteres")
+    @Size(max = 15, min = 10, message = "La contraseña debe tener mínimo 10 caracteres y máximo 15")
     @Pattern(regexp = "^(?=.*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/~`\\s]).*$", message = "La contraseña debe contener al menos un caracter especial")
     private String password;
     @NotNull(message = "no puede estar vacío")
