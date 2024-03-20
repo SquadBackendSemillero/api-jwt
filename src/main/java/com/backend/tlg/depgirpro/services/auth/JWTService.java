@@ -12,9 +12,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -103,5 +105,16 @@ public class JWTService {
         }catch(Exception e) {
             throw new InternalServerExceptionManaged("No se pudo desencriptar la clave secreta");
         }
+    }
+
+    public String extractTokenFromRequest(HttpServletRequest request){
+        String header=request.getHeader("Authorization");
+        if (!StringUtils.hasText(header) || !header.startsWith("Bearer ")){
+            return null;
+        }
+        return header.split(" ")[1];
+    }
+    public Date extractExpiration(String jwt){
+        return this.extractAllClaims(jwt).getExpiration();
     }
 }

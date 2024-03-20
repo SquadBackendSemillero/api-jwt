@@ -2,9 +2,11 @@ package com.backend.tlg.depgirpro.controller;
 
 import com.backend.tlg.depgirpro.dto.LoginRequestDTO;
 import com.backend.tlg.depgirpro.dto.LoginResponseDTO;
+import com.backend.tlg.depgirpro.dto.LogoutResponseDTO;
 import com.backend.tlg.depgirpro.dto.PerfilResponseDTO;
 import com.backend.tlg.depgirpro.entity.Persona;
 import com.backend.tlg.depgirpro.services.auth.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,12 @@ public class LoginController {
     @GetMapping("/profile")
     public ResponseEntity<PerfilResponseDTO> obtenerUsuarioLogeado(){
         return ResponseEntity.ok(this.authService.findLoggedUser());
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutResponseDTO> logout(HttpServletRequest req){
+        this.authService.logout(req);
+        return ResponseEntity.ok(new LogoutResponseDTO("Logout exitoso"));
     }
 }

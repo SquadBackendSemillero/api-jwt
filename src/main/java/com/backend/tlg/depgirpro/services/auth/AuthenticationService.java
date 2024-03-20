@@ -3,11 +3,14 @@ package com.backend.tlg.depgirpro.services.auth;
 import com.backend.tlg.depgirpro.dto.LoginRequestDTO;
 import com.backend.tlg.depgirpro.dto.LoginResponseDTO;
 import com.backend.tlg.depgirpro.dto.PerfilResponseDTO;
+import com.backend.tlg.depgirpro.entity.JwtToken;
 import com.backend.tlg.depgirpro.entity.Persona;
 import com.backend.tlg.depgirpro.exceptions.BadCredentialsExceptionManaged;
 import com.backend.tlg.depgirpro.exceptions.NotFoundExceptionManaged;
 import com.backend.tlg.depgirpro.exceptions.UserDisabledExceptionManaged;
+import com.backend.tlg.depgirpro.repository.JwtTokenRepository;
 import com.backend.tlg.depgirpro.repository.PersonaRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,9 +22,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +38,8 @@ public class AuthenticationService {
     private JWTService jwtService;
     @Autowired
     private PersonaRepository personaRep;
+    @Autowired
+    private JwtTokenRepository jwtTokenRep;
 
 
     public LoginResponseDTO login(LoginRequestDTO credenciales){
@@ -48,8 +55,24 @@ public class AuthenticationService {
         Persona persona=this.personaRep.findByCorreo(credenciales.getCorreo()).orElseThrow(
                 ()->new NotFoundExceptionManaged("Usuario no encontrado")
         );
-        return new LoginResponseDTO(this.jwtService.generarToken(persona, generarClaims(persona)));
+        String jwt=this.jwtService.generarToken(persona, generarClaims(persona));
+        this.guardarToken(jwt, persona);
+        return new LoginResponseDTO(jwt);
 
+    }
+
+    public void logout(HttpServletRequest req){
+        String jwt=this.jwtService.extractTokenFromRequest(req);
+        if (jwt==null || !StringUtils.hasText(jwt)){
+            return;
+        }
+        Optional<JwtToken> token=this.jwtTokenRep.findByToken(jwt);
+        if (token.isPresent() && token.get().isValid()){
+            JwtToken tokenBD=token.get();
+            tokenBD.setValid(false);
+            this.jwtTokenRep.save(tokenBD);
+
+        }
     }
 
     private Map<String, Object> generarClaims(Persona persona){
@@ -82,6 +105,10 @@ public class AuthenticationService {
                 personaBD.getCorreo(),
                 personaBD.getEquipo()!=null?personaBD.getEquipo().getNombre():"Sin equipo",
                 personaBD.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+    }
+
+    private void guardarToken(String jwt, Persona persona){
+        this.jwtTokenRep.save(new JwtToken(jwt, this.jwtService.extractExpiration(jwt), persona));
     }
 
 }

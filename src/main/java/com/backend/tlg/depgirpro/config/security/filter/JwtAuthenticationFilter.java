@@ -1,7 +1,9 @@
 package com.backend.tlg.depgirpro.config.security.filter;
 
+import com.backend.tlg.depgirpro.entity.JwtToken;
 import com.backend.tlg.depgirpro.entity.Persona;
 import com.backend.tlg.depgirpro.exceptions.NotFoundExceptionManaged;
+import com.backend.tlg.depgirpro.repository.JwtTokenRepository;
 import com.backend.tlg.depgirpro.repository.PersonaRepository;
 import com.backend.tlg.depgirpro.services.auth.JWTService;
 import jakarta.servlet.FilterChain;
@@ -17,6 +19,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,15 +29,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JWTService jwtService;
     @Autowired
     private PersonaRepository personaRep;
+    @Autowired
+    private JwtTokenRepository tokenRep;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header=request.getHeader("Authorization");
-        if (!StringUtils.hasText(header) || !header.startsWith("Bearer ")){
+        String jwt=this.jwtService.extractTokenFromRequest(request);
+        if (jwt==null || !StringUtils.hasText(jwt)){
             filterChain.doFilter(request, response);
             return;
         }
-        String jwt=header.split(" ")[1];
+        Optional<JwtToken> tokenBD=this.tokenRep.findByToken(jwt);
+        boolean isValid=this.validateToken(tokenBD);
+        if (!isValid){
+            filterChain.doFilter(request, response);
+            return;
+        }
         String correo=this.jwtService.extractUsername(jwt);
         Persona personaBD=this.personaRep.findByCorreo(correo).orElseThrow(()->
                 new NotFoundExceptionManaged("Persona no encontrada"));
@@ -43,5 +54,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(upat);
         filterChain.doFilter(request, response);
 
+    }
+
+
+    private boolean validateToken(Optional<JwtToken> token){
+        if (!token.isPresent()){
+            return false;
+        }
+        JwtToken tokenBD=token.get();
+        Date now=new Date(System.currentTimeMillis());
+        boolean isValid=tokenBD.isValid() && tokenBD.getExpiracion().after(now);
+        if(!isValid){
+            updateTokenStatus(tokenBD);
+        }
+        return isValid;
+    }
+
+
+    private void updateTokenStatus(JwtToken tokenBD){
+        tokenBD.setValid(false);
+        this.tokenRep.save(tokenBD);
     }
 }
