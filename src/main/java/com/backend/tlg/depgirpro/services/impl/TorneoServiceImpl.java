@@ -8,6 +8,7 @@ import com.backend.tlg.depgirpro.entity.Encuentro;
 import com.backend.tlg.depgirpro.entity.Equipo;
 import com.backend.tlg.depgirpro.entity.Fecha;
 import com.backend.tlg.depgirpro.entity.Torneo;
+import com.backend.tlg.depgirpro.exceptions.BussinessRuleException;
 import com.backend.tlg.depgirpro.exceptions.NotFoundExceptionManaged;
 import com.backend.tlg.depgirpro.repository.EquipoRepository;
 import com.backend.tlg.depgirpro.repository.FechaRepository;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +54,11 @@ public class TorneoServiceImpl implements TorneoService {
     @Override
     public ResponseEntity<?> agregarEncuentro(Long idTorneo, RegistroEncuentroDTO dto) {
         Map<String, Object> respuesta=new HashMap<>();
-        Equipo equipoLocalBD=this.equipoRep.findById(dto.getIdEquipoLocal()).orElseThrow(()->new NotFoundExceptionManaged("Equipo no encontrado en la base de datos."));
-        Equipo equipoVisitanteBD=this.equipoRep.findById(dto.getIdEquipoVisitante()).orElseThrow(()->new NotFoundExceptionManaged("Equipo no encontrado en la base de datos."));
-        Torneo torneoBD=this.torneoRep.findById(idTorneo).orElseThrow(()->new NotFoundExceptionManaged("Torneo aún no registrado en la base de datos."));
+
+
+        Equipo equipoLocalBD=this.equipoRep.findById(dto.getIdEquipoLocal()).orElseThrow(()->new NotFoundExceptionManaged("404", "Error de búsqueda", "Equipo no encontrado en la base de datos", HttpStatus.NOT_FOUND));
+        Equipo equipoVisitanteBD=this.equipoRep.findById(dto.getIdEquipoVisitante()).orElseThrow(()->new NotFoundExceptionManaged("404", "Error de búsqueda", "Equipo no encontrado en la base de datos", HttpStatus.NOT_FOUND));
+        Torneo torneoBD=this.torneoRep.findById(idTorneo).orElseThrow(()->new NotFoundExceptionManaged("404", "Error de búsqueda", "Torneo no encontrado en la base de datos", HttpStatus.NOT_FOUND));
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(dto.getFecha().getFecha());
         Optional<Fecha> fechaBD=this.fechaRep.findByAnioAndMesAndDia(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH));

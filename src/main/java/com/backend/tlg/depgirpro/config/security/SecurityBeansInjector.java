@@ -6,6 +6,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,7 +36,7 @@ public class SecurityBeansInjector {
     public UserDetailsService userDetailsService(){
         return (correo)->{
             return this.personaRep.findByCorreo(correo).orElseThrow(
-                    ()->new NotFoundExceptionManaged("Usuario no registrado en la base de datos"));
+                    ()->new NotFoundExceptionManaged("404", "Error de búsqueda", "Usuario no encontrado en la base de datos", HttpStatus.NOT_FOUND));
         };
     }
 

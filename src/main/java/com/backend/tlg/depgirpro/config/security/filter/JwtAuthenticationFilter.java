@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String correo=this.jwtService.extractUsername(jwt);
         Persona personaBD=this.personaRep.findByCorreo(correo).orElseThrow(()->
-                new NotFoundExceptionManaged("Persona no encontrada"));
+                new NotFoundExceptionManaged("404", "Error de búsqueda", "Persona no encontrada en la base de datos", HttpStatus.NOT_FOUND));
         UsernamePasswordAuthenticationToken upat=new UsernamePasswordAuthenticationToken
                 (correo, null, personaBD.getAuthorities());
         upat.setDetails(new WebAuthenticationDetails(request));

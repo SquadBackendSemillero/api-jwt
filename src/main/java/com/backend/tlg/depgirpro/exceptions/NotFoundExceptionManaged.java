@@ -1,9 +1,11 @@
 package com.backend.tlg.depgirpro.exceptions;
 
-public class NotFoundExceptionManaged extends RuntimeException{
+import org.springframework.http.HttpStatus;
 
+public class NotFoundExceptionManaged extends BussinessRuleException{
 
-    public NotFoundExceptionManaged(String mensaje){
-        super(mensaje);
+    public NotFoundExceptionManaged(String code, String titulo, String message, HttpStatus httpStatus){
+        super (code, titulo, message, httpStatus);
     }
+
 }

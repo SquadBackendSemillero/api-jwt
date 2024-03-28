@@ -33,4 +33,9 @@ public class RolController {
     public ResponseEntity<List<PermisoResponseDTO>> listarOperacionesPermitidas(@PathVariable Long idRol){
         return this.rolService.listarOperacionesPermitidas(idRol);
     }
+
+    @DeleteMapping("/{idRol}")
+    public ResponseEntity<?> eliminarRol(@PathVariable Long idRol){
+        return this.rolService.eliminarRol(idRol);
+    }
 }

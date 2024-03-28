@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -92,7 +93,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
     private List<Operacion> operacionesDeUsuarioActual(Authentication auth){
         UsernamePasswordAuthenticationToken authToken=(UsernamePasswordAuthenticationToken) auth;
         String correo=(String) authToken.getPrincipal();
-        Persona personaBD=this.personaRep.findByCorreo(correo).orElseThrow(()-> new NotFoundExceptionManaged("Not found"));
+        Persona personaBD=this.personaRep.findByCorreo(correo).orElseThrow(()-> new NotFoundExceptionManaged("404", "Error de búsqueda", "Persona no encontrada en la base de datos", HttpStatus.NOT_FOUND));
         List<Operacion> operaciones=new ArrayList<>();
         personaBD.getRole().getPermisos().forEach(permiso->operaciones.add(permiso.getOperacion()));
         logger.info("Extrae los permisos o las operaciones que puede hacer el usuario segun su rol");

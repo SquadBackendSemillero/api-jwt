@@ -7,7 +7,6 @@ import com.backend.tlg.depgirpro.exceptions.InternalServerExceptionManaged;
 import com.backend.tlg.depgirpro.repository.CryptoKeyRepository;
 import com.backend.tlg.depgirpro.repository.SecretKeyRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

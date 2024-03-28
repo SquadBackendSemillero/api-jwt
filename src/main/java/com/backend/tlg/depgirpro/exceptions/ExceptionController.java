@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionController {
 
     @ExceptionHandler(NotFoundExceptionManaged.class)
-    public ResponseEntity<String> returnNotFoundException(NotFoundExceptionManaged e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    public ResponseEntity<GenericBussinessDTOException> returnNotFoundException(NotFoundExceptionManaged e){
+        GenericBussinessDTOException response=new GenericBussinessDTOException(e.getTitulo(), e.getCode(), e.getMessage(), "ResponseStatusException");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(InternalServerExceptionManaged.class)
@@ -20,18 +21,21 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(BadCredentialsExceptionManaged.class)
-    public ResponseEntity<String> returnBadCredentialsException(BadCredentialsExceptionManaged e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<GenericBussinessDTOException> returnBadCredentialsException(BadCredentialsExceptionManaged e){
+        return ResponseEntity.badRequest().body(new GenericBussinessDTOException(e.getTitulo(), e.getCode(), e.getMessage(), "BadCredentialsException"));
     }
 
     @ExceptionHandler(UserDisabledExceptionManaged.class)
-    public ResponseEntity<String> returnDisabledException(UserDisabledExceptionManaged e){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    public ResponseEntity<GenericBussinessDTOException> returnDisabledException(UserDisabledExceptionManaged e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GenericBussinessDTOException(e.getTitulo(),e.getCode(),e.getMessage(), "UserDisabledException"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> accessDeniedHandlerException(AccessDeniedException e){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No posee los permisos para realizar esta acción");
     }
+
+
+
 
 }

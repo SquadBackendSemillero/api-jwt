@@ -14,4 +14,7 @@ public interface RolService {
 
     ResponseEntity<List<PermisoResponseDTO>> listarOperacionesPermitidas(Long idRol);
 
+
+    ResponseEntity<?> eliminarRol(Long idRol);
+
 }

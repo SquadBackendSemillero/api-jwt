@@ -13,6 +13,7 @@ import com.backend.tlg.depgirpro.repository.PersonaRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -47,13 +48,13 @@ public class AuthenticationService {
         try{
             authManager.authenticate(upat);
         }catch(BadCredentialsException e){
-            throw new BadCredentialsExceptionManaged("Correo o contraseña inválidos");
+            throw new BadCredentialsExceptionManaged("400", "Error de validación", "Correo o contraseña incorrectos", HttpStatus.BAD_REQUEST);
         }catch (DisabledException e){
-            throw new UserDisabledExceptionManaged("Usuario deshabilitado o fuera de servicio");
+            throw new UserDisabledExceptionManaged("403", "Error de validación", "Su cuenta ha sido desactivada, por favor, contacte al administrador para más información", HttpStatus.FORBIDDEN);
         }
 
         Persona persona=this.personaRep.findByCorreo(credenciales.getCorreo()).orElseThrow(
-                ()->new NotFoundExceptionManaged("Usuario no encontrado")
+                ()->new NotFoundExceptionManaged("404", "Error de búsqueda", "Persona no encontrada en la base de datos", HttpStatus.NOT_FOUND)
         );
         String jwt=this.jwtService.generarToken(persona, generarClaims(persona));
         this.guardarToken(jwt, persona);

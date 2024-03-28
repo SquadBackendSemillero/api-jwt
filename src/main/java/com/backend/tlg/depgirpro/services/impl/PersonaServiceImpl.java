@@ -33,7 +33,7 @@ public class PersonaServiceImpl implements PersonaService {
     public ResponseEntity<?> insertar(RegistroPersonaDTO dto) {
         Map<String, Object> respuesta=new HashMap<>();
         Equipo equipoBD=this.equipoRep.findById(dto.getIdEquipo()).orElseThrow(
-                ()->new NotFoundExceptionManaged("Equipo no encontrado"));
+                ()->new NotFoundExceptionManaged("404", "Error de búsqueda", "Equipo no encontrado en la base de datos", HttpStatus.NOT_FOUND));
         Rol rolJugador=this.rolRep.findById(2L).get();
         Persona personaNew=this.personaRep.save(new Persona(
                 dto.getNombre(),
